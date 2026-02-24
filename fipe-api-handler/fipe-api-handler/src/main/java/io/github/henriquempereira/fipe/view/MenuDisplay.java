@@ -1,17 +1,29 @@
 package io.github.henriquempereira.fipe.view;
 
-import io.github.henriquempereira.fipe.model.Data;
 import io.github.henriquempereira.fipe.services.FipeClient;
+import io.github.henriquempereira.fipe.services.VehicleSearchService;
 
-import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Classe responsável por exibir a interface de usuário no terminal.
+ * Gerencia o loop do menu principal e roteia a escolha do usuário para o serviço de busca adequado.
+ */
 public class MenuDisplay {
 
+    // O Scanner é mantido como atributo da classe para ser reaproveitado em múltiplas leituras
     private Scanner scanner = new Scanner(System.in);
     private String userChoice;
 
+    /**
+     * Inicia a interação com o usuário, apresentando as opções de veículos disponíveis.
+     * O loop continua até que o usuário decida encerrar a aplicação.
+     *
+     * @param fipeClient O cliente HTTP configurado para realizar as requisições externas.
+     */
     public void startMenu(FipeClient fipeClient) {
+        // Inicializa o serviço de busca injetando as dependências necessárias
+        VehicleSearchService vehicleSearchService = new VehicleSearchService(fipeClient, scanner);
         System.out.println("\nEste é o aplicativo de consultas de preço de carro de acordo com a FIPE.");
 
         do {
@@ -23,32 +35,31 @@ public class MenuDisplay {
 
             userChoice = scanner.nextLine();
 
+            // Padroniza a entrada para maiúsculo para garantir que a validação seja case-insensitive
             switch (userChoice.toUpperCase()) {
                 case "CARRO":
+                    // Exibindo todos as marcas de CARRO
                     System.out.println("VOCÊ ESCOLHEU CARRO!");
-                    List<Data> brandList = fipeClient.fetchDataType("carros");
-                    brandList.forEach(brand -> System.out.println("Marca: " +
-                                    brand.dataName() + " -> Código: " + brand.dataCode()));
-                    System.out.println("Escolha o código da marca que você deseja:");
-                    userChoice = scanner.nextLine();
-                    fipeClient.fetchDataModel("carros", userChoice).forEach(model ->
-                            System.out.println("Modelo: " + model.dataName() + " -> " +
-                                    "Código: " + model.dataCode()));
+                    vehicleSearchService.searchVehicle("carros");
                     break;
-//                case "CAMINHÃO":
-//                    System.out.println("VOCÊ ESCOLHEU CAMINHÃO!");
-//                    break;
-//                case "MOTO":
-//                    System.out.println("VOCÊ ESCOLHEU MOTO!");
-//                    break;
-//                case "SAIR":
-//                    System.out.println("VOCÊ ESCOLHEU SAIR DO APP...");
-//                    break;
+                case "CAMINHÃO", "CAMINHAO":
+                    System.out.println("VOCÊ ESCOLHEU CAMINHÃO!");
+                    vehicleSearchService.searchVehicle("caminhoes");
+                    break;
+                case "MOTO":
+                    System.out.println("VOCÊ ESCOLHEU MOTO!");
+                    vehicleSearchService.searchVehicle("motos");
+                    break;
+                case "SAIR":
+                    System.out.println("VOCÊ ESCOLHEU SAIR DO APP...");
+                    break;
                 default:
                     System.out.println("VOCÊ NÃO DIGITOU CORRETAMENTE...");
                     break;
             }
 
         } while (!userChoice.equalsIgnoreCase("SAIR"));
+
+        scanner.close();
     }
 }
