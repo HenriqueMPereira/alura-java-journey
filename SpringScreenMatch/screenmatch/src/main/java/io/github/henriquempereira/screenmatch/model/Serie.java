@@ -1,5 +1,7 @@
 package io.github.henriquempereira.screenmatch.model;
 
+import io.github.henriquempereira.screenmatch.services.TranslationService;
+
 import java.util.OptionalDouble;
 
 public class Serie {

@@ -3,14 +3,20 @@ package io.github.henriquempereira.screenmatch.view;
 import io.github.henriquempereira.screenmatch.model.*;
 import io.github.henriquempereira.screenmatch.services.ApiClient;
 import io.github.henriquempereira.screenmatch.services.DataConverter;
+import io.github.henriquempereira.screenmatch.services.TranslationService;
+import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Component
 public class InteractiveMenu {
+    private final String ADRESS = "http://www.omdbapi.com/?t=";
+    private final String API_KEY = "&apikey=e8be24d1";
+    //private final TranslationService translator;
+
     private Scanner scanner = new Scanner(System.in);
 
     private ApiClient apiClient = new ApiClient();
@@ -19,10 +25,12 @@ public class InteractiveMenu {
 
     private String userChoice = "1";
 
-    private final String ADRESS = "http://www.omdbapi.com/?t=";
-    private final String API_KEY = "&apikey=e8be24d1";
 
     private List<SeriesData> seriesDataList = new ArrayList<>();
+
+//    public InteractiveMenu(TranslationService translator) {
+//        this.translator = translator;
+//    }
 
     public void starMenu() {
         var menu = """
@@ -77,6 +85,10 @@ public class InteractiveMenu {
         List<Serie> serieList = new ArrayList<>();
 
         serieList = seriesDataList.stream()
+//                .map(d -> {
+//                    String plotTraduzido = translator.obterTraducao(d.plot());
+//                    return new Serie(d, plotTraduzido);
+//                })
                 .map(d -> new Serie(d))
                 .collect(Collectors.toList());
 
