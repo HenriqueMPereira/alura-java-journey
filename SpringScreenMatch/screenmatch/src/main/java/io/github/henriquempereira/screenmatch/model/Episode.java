@@ -1,13 +1,24 @@
 package io.github.henriquempereira.screenmatch.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+@Entity
+@Table(name = "episode")
 public class Episode {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String title;
     private int season;
     private Double rating;
     private LocalDate released;
+
+    @ManyToOne
+    private Serie serie;
 
     public Episode(String season, EpisodeData episodeData) {
         this.title = episodeData.title();
@@ -24,6 +35,22 @@ public class Episode {
         } catch (NumberFormatException e){
             this.rating = 0.0;
         }
+    }
+
+    public Serie getSerie() {
+        return serie;
+    }
+
+    public void setSerie(Serie serie) {
+        this.serie = serie;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {

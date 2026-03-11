@@ -1,9 +1,10 @@
 package io.github.henriquempereira.screenmatch.view;
 
 import io.github.henriquempereira.screenmatch.model.*;
+import io.github.henriquempereira.screenmatch.repository.SerieRepository;
 import io.github.henriquempereira.screenmatch.services.ApiClient;
 import io.github.henriquempereira.screenmatch.services.DataConverter;
-import io.github.henriquempereira.screenmatch.services.TranslationService;
+
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
@@ -15,22 +16,21 @@ import java.util.stream.Collectors;
 public class InteractiveMenu {
     private final String ADRESS = "http://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=e8be24d1";
-    //private final TranslationService translator;
+
+    private final SerieRepository repository;
+
+    public InteractiveMenu(SerieRepository repository) {
+        this.repository = repository;
+    }
 
     private Scanner scanner = new Scanner(System.in);
-
     private ApiClient apiClient = new ApiClient();
-
     private DataConverter dataConverter = new DataConverter();
-
     private String userChoice = "1";
 
+    private List<Serie> serieList = new ArrayList<>();
 
     private List<SeriesData> seriesDataList = new ArrayList<>();
-
-//    public InteractiveMenu(TranslationService translator) {
-//        this.translator = translator;
-//    }
 
     public void starMenu() {
         var menu = """
@@ -47,8 +47,7 @@ public class InteractiveMenu {
 
             switch (userChoice){
                 case "1":
-                    //System.out.println(getSeriesData());
-                    seriesDataList.add(getSeriesData());
+                    getSeries();
                     break;
                 case "2":
                     getEpisodeData();
@@ -62,6 +61,14 @@ public class InteractiveMenu {
         }
     }
 
+    private void getSeries() {
+        SeriesData seriesData = getSeriesData();
+        //seriesDataList.add(seriesData);
+        Serie serie = new Serie(seriesData);
+        repository.save(serie);
+        System.out.println(seriesData);
+    }
+
     private SeriesData getSeriesData() {
         System.out.println("Digite a serie que deseja buscar:");
         var serieName = scanner.nextLine();
@@ -71,6 +78,9 @@ public class InteractiveMenu {
 
     private void getEpisodeData() {
         SeriesData seriesData = getSeriesData();
+        showSeries();
+        System.out.println("Digite o noem do episódio : ");
+        var serieName = scanner.nextLine();
         List<EpisodeData> episodeDataList = new ArrayList<>();
 
         for(int i = 0; i < seriesData.numberOfSeasons(); i++){
@@ -82,15 +92,10 @@ public class InteractiveMenu {
     }
 
     private void showSeries() {
-        List<Serie> serieList = new ArrayList<>();
-
-        serieList = seriesDataList.stream()
-//                .map(d -> {
-//                    String plotTraduzido = translator.obterTraducao(d.plot());
-//                    return new Serie(d, plotTraduzido);
-//                })
-                .map(d -> new Serie(d))
-                .collect(Collectors.toList());
+        serieList = repository.findAll();
+//        serieList = seriesDataList.stream()
+//                .map(d -> new Serie(d))
+//                .collect(Collectors.toList());
 
         serieList.stream()
                 .sorted(Comparator.comparing(Serie::getGenres))
