@@ -30,8 +30,6 @@ public class InteractiveMenu {
 
     private List<Serie> serieList = new ArrayList<>();
 
-    private List<SeriesData> seriesDataList = new ArrayList<>();
-
     public void starMenu() {
         var menu = """
                     Escolha uma das opções abaixo
@@ -77,18 +75,36 @@ public class InteractiveMenu {
     }
 
     private void getEpisodeData() {
-        SeriesData seriesData = getSeriesData();
         showSeries();
-        System.out.println("Digite o noem do episódio : ");
+        System.out.println("Digite o nome da série: ");
         var serieName = scanner.nextLine();
-        List<EpisodeData> episodeDataList = new ArrayList<>();
+        Optional<Serie> serie = serieList.stream()
+                .filter(s -> s.getTitle().toLowerCase().contains(serieName.toLowerCase()))
+                .findFirst();
 
-        for(int i = 0; i < seriesData.numberOfSeasons(); i++){
-            var json = apiClient.fetchData(ADRESS + URLEncoder.encode(seriesData.title(), StandardCharsets.UTF_8) +
-                    "&season=" + i + "&" + API_KEY);
-            episodeDataList.add(dataConverter.convertTo(json, EpisodeData.class));
+        if(serie.isPresent()){
+            var serieSearched = serie.get();
+            List<SeasonData> seasonDataList = new ArrayList<>();
+            for(int i = 1; i <= serieSearched.getNumberOfSeasons(); i++){
+                var json = apiClient.fetchData(ADRESS + URLEncoder.encode(serieSearched.getTitle(), StandardCharsets.UTF_8) +
+                        "&season=" + i + "&" + API_KEY);
+                seasonDataList.add(dataConverter.convertTo(json, SeasonData.class));
+            }
+            seasonDataList.forEach(System.out::println);
+
+            List<Episode> episodes = seasonDataList.stream()
+                    .flatMap(d -> d.episodes().stream()
+                            .map(e -> new Episode(d.season(), e)))
+                    .collect(Collectors.toList());
+
+            serieSearched.setEpisodeList(episodes);
+
+            repository.save(serieSearched);
+
+        } else {
+            System.out.println("Série não encontrada!");
         }
-        episodeDataList.forEach(System.out::println);
+
     }
 
     private void showSeries() {

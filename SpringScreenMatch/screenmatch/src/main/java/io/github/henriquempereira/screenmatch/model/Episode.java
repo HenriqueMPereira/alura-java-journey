@@ -20,6 +20,8 @@ public class Episode {
     @ManyToOne
     private Serie serie;
 
+    public Episode(){}
+
     public Episode(String season, EpisodeData episodeData) {
         this.title = episodeData.title();
         this.season = Integer.parseInt(season);
