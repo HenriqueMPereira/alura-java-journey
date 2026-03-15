@@ -38,6 +38,7 @@ public class InteractiveMenu {
                     3 - Lista séries buscadas
                     4 - Buscar série pelo nome
                     5 - Buscar série pelo nome do ator e avaliação
+                    6 - Buscar top 5 séries
                     
                     0 - Sair
                     """;
@@ -60,6 +61,9 @@ public class InteractiveMenu {
                     break;
                 case "5":
                     findSerieByNameAndRating();
+                    break;
+                case "6":
+                    findTopByRating();
                     break;
                 case "0":
                     break;
@@ -149,5 +153,10 @@ public class InteractiveMenu {
 
         serieSearched.stream()
                 .forEach(s -> System.out.println("Série: " + s.getTitle() + " -> Avaliação: " + s.getRating()));
+    }
+
+    private void findTopByRating() {
+        List<Serie> series = repository.findTop5ByOrderByRatingDesc();
+        series.forEach(System.out::println);
     }
 }
