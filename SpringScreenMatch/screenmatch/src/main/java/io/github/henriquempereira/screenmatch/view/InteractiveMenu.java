@@ -37,6 +37,7 @@ public class InteractiveMenu {
                     2 - Escolher episódios
                     3 - Lista séries buscadas
                     4 - Buscar série pelo nome
+                    5 - Buscar série pelo nome do ator e avaliação
                     
                     0 - Sair
                     """;
@@ -55,7 +56,11 @@ public class InteractiveMenu {
                     showSeries();
                     break;
                 case "4":
-                    showSerieByName();
+                    findSerieByName();
+                    break;
+                case "5":
+                    findSerieByNameAndRating();
+                    break;
                 case "0":
                     break;
             }
@@ -122,7 +127,7 @@ public class InteractiveMenu {
                 .forEach(System.out::println);
     }
 
-    private void showSerieByName() {
+    private void findSerieByName() {
         System.out.println("Digite a serie que deseja buscar:");
         var serieName = scanner.nextLine();
         Optional<Serie> serieSearched = repository.findByTitleContainingIgnoreCase(serieName);
@@ -132,5 +137,17 @@ public class InteractiveMenu {
         } else {
             System.out.println("Série não encontra!!!");
         }
+    }
+
+    private void findSerieByNameAndRating() {
+        System.out.println("Digite o nome do ator: ");
+        var actorName = scanner.nextLine();
+        System.out.println("Digite a avaliação mínima: ");
+        var rating = scanner.nextDouble();
+        var cleaning = scanner.nextLine();
+        List<Serie> serieSearched = repository.findByActorsContainingIgnoreCaseAndRatingGreaterThan(actorName, rating);
+
+        serieSearched.stream()
+                .forEach(s -> System.out.println("Série: " + s.getTitle() + " -> Avaliação: " + s.getRating()));
     }
 }
