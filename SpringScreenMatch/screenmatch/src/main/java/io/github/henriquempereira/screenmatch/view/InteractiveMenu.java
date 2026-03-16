@@ -39,6 +39,9 @@ public class InteractiveMenu {
                     4 - Buscar série pelo nome
                     5 - Buscar série pelo nome do ator e avaliação
                     6 - Buscar top 5 séries
+                    7 - Buscar série por genre
+                    8 - Buscar por qnt temporada e avaliação mínima
+                    9 - Buscar episodios por trecho do título
                     
                     0 - Sair
                     """;
@@ -64,6 +67,15 @@ public class InteractiveMenu {
                     break;
                 case "6":
                     findTopByRating();
+                    break;
+                case "7":
+                    findSerieByCategoria();
+                    break;
+                case "8":
+                    findSerieBySeasonAndRating();
+                    break;
+                case "9":
+                    findEpisodeByTitle();
                     break;
                 case "0":
                     break;
@@ -159,4 +171,34 @@ public class InteractiveMenu {
         List<Serie> series = repository.findTop5ByOrderByRatingDesc();
         series.forEach(System.out::println);
     }
+
+    private void findSerieByCategoria() {
+        System.out.println("Digite a genre que deseja buscar: ");
+        var userGenre = scanner.nextLine();
+        Genre genre = Genre.fromString(userGenre);
+        List<Serie> serie = repository.findSerieByGenres(genre);
+        serie.forEach(System.out::println);
+    }
+
+    private void findSerieBySeasonAndRating(){
+        System.out.println("Digite a quantidade máxima de temporadas: ");
+        var numOfSeason = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Digite a avaliação mínima: ");
+        var minRating = scanner.nextDouble();
+        scanner.nextLine();
+        List<Serie> series = repository.findSerieBySeasonAndRating(numOfSeason,minRating);
+        series.forEach(System.out::println);
+    }
+
+    private void findEpisodeByTitle() {
+        System.out.println("Digite o nome do episódio que deseja buscar: ");
+        var episodeName = scanner.nextLine();
+        List<Episode> episodesSearched = repository.findEpisodeByTitle(episodeName);
+        episodesSearched.stream()
+                .forEach(e -> System.out.println("Título: " + e.getTitle() +
+                        " -> Temporada: " + e.getSeason() + " -> Série: " + e.getSerie().getTitle() +
+                        " -> Avaliação: " + e.getRating()));
+    }
+
 }
