@@ -18,7 +18,7 @@ public class Serie {
     private Double rating;
     private Integer numberOfSeasons;
     @Enumerated(EnumType.STRING) // Diz ao Hibernate como é pra gravar o Enum (Ordinal ou String)
-    private Categoria genres; // O que é um ENUM
+    private Genre genres; // O que é um ENUM
     private String actors;
     private String poster;
     private String plot;
@@ -33,7 +33,7 @@ public class Serie {
         this.rating = OptionalDouble.of(Double.valueOf(seriesData.rating())).orElse(0);
         this.numberOfSeasons = seriesData.numberOfSeasons();
         // split separa em cada virgula e guarda em um array de string, pega o primeiro valor e "limpa" com trim
-        this.genres = Categoria.fromString(seriesData.genres().split(",")[0].trim());
+        this.genres = Genre.fromString(seriesData.genres().split(",")[0].trim());
         this.actors = seriesData.actors();
         this.poster = seriesData.poster();
         this.plot = seriesData.plot();
@@ -80,11 +80,11 @@ public class Serie {
         this.numberOfSeasons = numberOfSeasons;
     }
 
-    public Categoria getGenres() {
+    public Genre getGenres() {
         return genres;
     }
 
-    public void setGenres(Categoria genres) {
+    public void setGenres(Genre genres) {
         this.genres = genres;
     }
 
@@ -121,7 +121,7 @@ public class Serie {
                 ", genres=" + genres +
                 ", actors='" + actors + '\'' +
                 ", poster='" + poster + '\'' +
-                ", plot='" + plot + '\'' +
-                ", episodios='" + episodeList + '\'';
+                ", plot='" + plot + '\'';
+                //", episodios='" + episodeList + '\'';
     }
 }
