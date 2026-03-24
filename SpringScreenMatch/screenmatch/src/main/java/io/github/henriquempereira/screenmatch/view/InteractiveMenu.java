@@ -30,6 +30,8 @@ public class InteractiveMenu {
 
     private List<Serie> serieList = new ArrayList<>();
 
+    Optional<Serie> serieSearched;
+
     public void starMenu() {
         var menu = """
                     Escolha uma das opções abaixo
@@ -42,6 +44,7 @@ public class InteractiveMenu {
                     7 - Buscar série por genre
                     8 - Buscar por qnt temporada e avaliação mínima
                     9 - Buscar episodios por trecho do título
+                    10 - Buscar top 5 episódios
                     
                     0 - Sair
                     """;
@@ -76,6 +79,9 @@ public class InteractiveMenu {
                     break;
                 case "9":
                     findEpisodeByTitle();
+                    break;
+                case "10":
+                    findTopEpisodes();
                     break;
                 case "0":
                     break;
@@ -146,7 +152,7 @@ public class InteractiveMenu {
     private void findSerieByName() {
         System.out.println("Digite a serie que deseja buscar:");
         var serieName = scanner.nextLine();
-        Optional<Serie> serieSearched = repository.findByTitleContainingIgnoreCase(serieName);
+        serieSearched = repository.findByTitleContainingIgnoreCase(serieName);
 
         if(serieSearched.isPresent()){
             System.out.println("Dados da série: " + serieSearched.get());
@@ -201,4 +207,15 @@ public class InteractiveMenu {
                         " -> Avaliação: " + e.getRating()));
     }
 
+    private void findTopEpisodes() {
+        findSerieByName();
+        if(serieSearched.isPresent()){
+            Serie serie = serieSearched.get();
+            List<Episode> episodes = repository.findTop5Episodes(serie);
+            episodes.stream()
+                    .forEach(e -> System.out.println("Título: " + e.getTitle() +
+                            " -> Temporada: " + e.getSeason() + " -> Nome da Série: " + e.getSerie().getTitle()
+                     + " -> Avaliação: " + e.getRating()));
+        }
+    }
 }
