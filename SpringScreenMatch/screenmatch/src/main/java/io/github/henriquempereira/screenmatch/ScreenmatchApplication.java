@@ -10,17 +10,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ScreenmatchApplication implements CommandLineRunner {
 
+	//@SpringBootApplication
+//public class ScreenmatchApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ScreenmatchApplication.class, args);
 	}
 
+	//
 	@Autowired
 	private SerieRepository repository;
 
+	//
 	@Override
 	public void run(String... args) throws Exception {
-
-//		Menu menu = new Menu();
+//
+// 		Menu menu = new Menu();
 //		menu.starMenu();
 		InteractiveMenu interactiveMenu = new InteractiveMenu(repository);
 		interactiveMenu.starMenu();
