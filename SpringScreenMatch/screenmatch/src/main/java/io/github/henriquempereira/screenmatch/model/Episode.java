@@ -14,6 +14,7 @@ public class Episode {
     private long id;
     private String title;
     private int season;
+    private int episodeNumber;
     private Double rating;
     private LocalDate released;
 
@@ -25,6 +26,7 @@ public class Episode {
     public Episode(String season, EpisodeData episodeData) {
         this.title = episodeData.title();
         this.season = Integer.parseInt(season);
+        this.episodeNumber = episodeData.episodeNumber();
 
         try {
             this.released = LocalDate.parse(episodeData.released());
@@ -69,6 +71,14 @@ public class Episode {
 
     public Double getRating() {
         return rating;
+    }
+
+    public int getEpisodeNumber() {
+        return episodeNumber;
+    }
+
+    public void setEpisodeNumber(int episodeNumber) {
+        this.episodeNumber = episodeNumber;
     }
 
     @Override

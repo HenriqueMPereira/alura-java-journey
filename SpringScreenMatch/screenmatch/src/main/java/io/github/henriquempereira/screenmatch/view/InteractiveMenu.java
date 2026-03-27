@@ -87,6 +87,8 @@ public class InteractiveMenu {
                     break;
             }
         }
+        scanner.close();
+        return;
     }
 
     private void getSeries() {
@@ -108,9 +110,7 @@ public class InteractiveMenu {
         showSeries();
         System.out.println("Digite o nome da série: ");
         var serieName = scanner.nextLine();
-//        Optional<Serie> serie = serieList.stream()
-//                .filter(s -> s.getTitle().toLowerCase().contains(serieName.toLowerCase()))
-//                .findFirst();
+
         Optional<Serie> serie = repository.findByTitleContainingIgnoreCase(serieName);
 
         if(serie.isPresent()){
@@ -135,7 +135,6 @@ public class InteractiveMenu {
         } else {
             System.out.println("Série não encontrada!");
         }
-
     }
 
     private void showSeries() {
